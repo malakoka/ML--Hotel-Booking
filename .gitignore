@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.py[cod]
+artifacts/*
+!artifacts/split/
+artifacts/split/*
+!artifacts/split/assignments.csv
+!artifacts/split/metadata.json
+data/raw/*.csv
+data/processed/
+data/holdout/
+tmp/
