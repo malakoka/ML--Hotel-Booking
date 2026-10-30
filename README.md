@@ -34,11 +34,13 @@ Repository: https://github.com/malakoka/ML--Hotel-Booking
 
 ## Setup and run on Windows / PowerShell
 
-Run these commands from the repository folder. The recorded preparation used
-Python 3.14.0; requirements.txt pins its analysis library versions.
+Run these commands from the repository folder. The original preparation recorded
+Python 3.14.0; the clustering contribution was reproduced and tested on Python
+3.13.14. The commands below use Python 3.13, which is installed on this computer.
+requirements.txt pins the analysis library versions.
 
 ```powershell
-py -3.14 -m venv .venv
+py -3.13 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 New-Item -ItemType Directory -Force -Path data/raw | Out-Null
 Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/afaq-ahmad/Hotel-booking-demand-Case-Study/master/H2.csv' -OutFile 'data/raw/H2.csv'
