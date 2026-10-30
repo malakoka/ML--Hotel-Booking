@@ -1,0 +1,82 @@
+{
+  "scope": "Milestone 1 clustering only; preliminary count review, not final optimized comparison",
+  "training_rows": 55930,
+  "validation_rows": 11887,
+  "encoded_features": 33,
+  "reference_k": 3,
+  "selected_k": 3,
+  "candidate_k": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "highest_silhouette_k": 4,
+  "highest_silhouette_score": 0.20579874295859185,
+  "highest_silhouette_min_fraction": 0.004773824423386376,
+  "selection_rule": "max training sampled silhouette among min cluster fraction >= .01; then lower DB, lower k; fallback without size filter",
+  "baseline_metrics": {
+    "reference_baseline": true,
+    "silhouette_sample": 0.19765670022774176,
+    "silhouette_sample_rows": 3000,
+    "davies_bouldin_all_rows": 1.812537036936618,
+    "inertia": 335541.14424622897,
+    "fit_seconds": 0.41545870000118157,
+    "iterations": 21,
+    "converged_before_limit": true,
+    "min_cluster_fraction": 0.06406222063293403,
+    "max_cluster_fraction": 0.6520472018594672,
+    "preliminary_selected": true
+  },
+  "selected_training_metrics": {
+    "reference_baseline": true,
+    "silhouette_sample": 0.19765670022774176,
+    "silhouette_sample_rows": 3000,
+    "davies_bouldin_all_rows": 1.812537036936618,
+    "inertia": 335541.14424622897,
+    "fit_seconds": 0.41545870000118157,
+    "iterations": 21,
+    "converged_before_limit": true,
+    "min_cluster_fraction": 0.06406222063293403,
+    "max_cluster_fraction": 0.6520472018594672,
+    "preliminary_selected": true
+  },
+  "selected_validation_metrics": {
+    "silhouette_sample": 0.20042747637050776,
+    "silhouette_sample_rows": 3000,
+    "davies_bouldin_all_rows": 1.785516573119421
+  },
+  "silhouette_sample_rows": 3000,
+  "sample_seed_train": 42,
+  "sample_seed_validation": 43,
+  "pca_2d_explained_variance": 0.3275970331747501,
+  "pca_used_for_clustering": false,
+  "supervised_test_file_opened": false,
+  "input_files": {
+    "data\\processed\\train.csv": "9137081c7864c1ffb79e3fcdd7a6e357b26ad4c13c005680be285f948e89053f",
+    "data\\processed\\validation.csv": "92646ead837e98c3320c57c99da3ab8e490547993db925828185779b166e5d34",
+    "artifacts\\split\\assignments.csv": "b8611308a44cfe00c77f8323ee5915d2e538776337e1872a0fb3ce3e24cbbae3"
+  },
+  "split_regenerated": true,
+  "split_counts_match_readme": true,
+  "versions": {
+    "python": "3.13.14",
+    "pandas": "3.1.0",
+    "numpy": "2.5.4",
+    "sklearn": "1.9.1"
+  },
+  "kmeans_parameters": {
+    "algorithm": "lloyd",
+    "copy_x": true,
+    "init": "k-means++",
+    "max_iter": 300,
+    "n_clusters": 3,
+    "n_init": 10,
+    "random_state": 42,
+    "tol": 0.0001,
+    "verbose": 0
+  },
+  "preprocessing_fit_seconds_excluded_from_model_times": true,
+  "thread_limit": 4
+}

@@ -1,0 +1,34 @@
+feature
+Adults
+Children
+Babies
+LeadTime
+TotalNights
+IsRepeatedGuest
+HasCompany
+ChildrenMissing
+ArrivalMonthSin
+ArrivalMonthCos
+Meal_BB
+Meal_FB
+Meal_HB
+Meal_SC
+MarketSegment_Aviation
+MarketSegment_Complementary
+MarketSegment_Corporate
+MarketSegment_Direct
+MarketSegment_Groups
+MarketSegment_Offline TA/TO
+MarketSegment_Online TA
+MarketSegment_infrequent_sklearn
+CustomerType_Contract
+CustomerType_Group
+CustomerType_Transient
+CustomerType_Transient-Party
+ReservedRoomType_A
+ReservedRoomType_B
+ReservedRoomType_D
+ReservedRoomType_E
+ReservedRoomType_F
+ReservedRoomType_G
+ReservedRoomType_infrequent_sklearn

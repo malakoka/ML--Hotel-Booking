@@ -1,10 +1,33 @@
 # City Hotel (H2): preprocessing and exploratory analysis
 
+## Milestone 1 clustering contribution
+
+The initial K-Means experiment is runnable with:
+
+```powershell
+.\.venv\Scripts\python.exe cluster.py
+```
+
+Run `prepare.py` first to generate the data and shared split. The clustering
+runner fits on training rows only, preserves a reference k=3 run, reviews k=2..6
+using unsupervised training criteria, and performs one validation check. It does
+not open the supervised test file. Results and a report section are written to
+`outputs/clustering/milestone1/`; fitted pipelines stay in `artifacts/clustering/`.
+The research comparison, assumptions and beginner instructions are in
+`docs/clustering_walkthrough.md`. This is an initial experiment; the three
+algorithms and systematic optimization are later work.
+
+This checkout originally had no generated records or split assignments, so
+preparation regenerated them using the existing fixed seeds and pinned libraries.
+Share the resulting split files with the team before combining experiments.
+Python 3.13 is also supported by the pinned dependencies used for this run.
+
 This repository prepares the City Hotel dataset for the CSE382 machine learning
-project. It verifies the original data, creates grouped train/validation/test
-partitions, generates EDA tables and plots, and fits reusable preprocessing
-pipelines. Regression models, classifiers, clustering algorithms, tuning and the
-final application are still to be implemented. Exploratory PCA is included;
+project and includes an initial K-Means clustering experiment. It verifies the
+original data, creates grouped train/validation/test partitions, generates EDA
+tables and plots, and fits reusable preprocessing pipelines. Regression models,
+classifiers, further clustering algorithms, systematic tuning and the final
+application remain to be implemented. Exploratory PCA is included;
 model cross-validation is not yet implemented.
 
 Repository: https://github.com/malakoka/ML--Hotel-Booking
