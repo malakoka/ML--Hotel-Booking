@@ -84,6 +84,12 @@ blocks still decide how much each attribute influences distance.
 
 ## Our exact Milestone 1 protocol
 
+The steps below describe the original baseline. A later pre-push audit widens
+the count range and checks sensitivity without overwriting that experiment.
+See [the audit](clustering_audit.md) and run `python audit_clustering.py`.
+Do not describe k=3 as a proven elbow: the wider inertia curve does not uniquely
+establish it, and a small k=4 segment represents bookings with babies.
+
 1. Use the original City Hotel H2 source and the team's existing preparation code.
    The downloaded SHA-256 must equal
    `6796f5b9b2b9e7281662b29730fc2880f8e614107d0d14d09be2ede1a6e605a4`.

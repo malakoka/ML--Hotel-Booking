@@ -17,6 +17,28 @@ The research comparison, assumptions and beginner instructions are in
 `docs/clustering_walkthrough.md`. This is an initial experiment; the three
 algorithms and systematic optimization are later work.
 
+### Pre-push scientific audit
+
+```powershell
+.\.venv\Scripts\python.exe audit_clustering.py
+```
+
+This separate audit reviews k=1..12 with five initialization seeds, three
+silhouette samples for the seed-42 fits, and three 80% training-subset checks
+for k=3/4. It verifies the raw source, shared split, processed training features,
+historical scores and saved predictions. It writes `outputs/clustering/audit/`
+and preserves the original baseline and fitted models. Read
+`docs/clustering_audit.md` for findings and official scikit-learn examples.
+
+**k=3 is the historical preliminary baseline, not a proven elbow or uniquely
+correct count.** The elbow hint depends on the searched range. At n_init=10,
+k=3 is more consistent across initialization seeds; at n_init=50, k=4
+consistently beats k=3 on both internal metrics in this targeted comparison.
+Keep both results visible. The original k=4 solution separates 267 bookings
+with babies, so the old 1% size preference can exclude meaningful small groups.
+Milestone 2 must revisit feature weighting, other algorithms and practical
+usefulness before a final choice.
+
 This checkout originally had no generated records or split assignments, so
 preparation regenerated them using the existing fixed seeds and pinned libraries.
 Share the resulting split files with the team before combining experiments.

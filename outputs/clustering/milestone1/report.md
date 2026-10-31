@@ -16,6 +16,8 @@ The feature choices describe lead time, stay length, party composition, seasonal
 
 K-Means with Euclidean distance; k-means++ initialization, n_init=10, max_iter=300, tol=0.0001, random_state=42, Lloyd algorithm. Reference baseline k=3 is retained separately. A limited k=2..6 review provides a preliminary cluster-count justification; it is already a small parameter-selection step, not the systematic all-algorithm optimization required in Milestone 2.
 
+A separate follow-up audit is available via `python audit_clustering.py`; see docs/clustering_audit.md and outputs/clustering/audit/. It preserves this historical experiment. Do not call k=3 a proven elbow or a uniquely correct count. The elbow hint depends on the reviewed range, and small groups can represent meaningful booking attributes rather than invalid records.
+
 Silhouette uses the same seeded uniform sample of 3,000 training rows for every candidate. It estimates sample geometry, not the exact full-training silhouette. Davies-Bouldin uses every row of the scored partition in the full encoded space. Scores are not calculated on the two-dimensional picture. Inertia is reported as a compactness diagnostic and normally decreases as k increases; it is not a standalone selector.
 
 Before evaluating candidates, use this rule: among candidates with every cluster >=1% of training rows, choose the highest sampled silhouette; break exact ties using lower Davies-Bouldin and then lower k. If none passes the size check, choose by the same scores and flag the limitation. The 1% rule is a pragmatic baseline guard, not a universal law. No outcomes or validation scores enter this rule.
