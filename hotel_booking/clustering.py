@@ -140,6 +140,11 @@ def write_report(output, summary, profiles):
         "tol=0.0001, random_state=42, Lloyd algorithm. Reference baseline k=3 is retained separately. "
         "A limited k=2..6 review provides a preliminary cluster-count justification; it is already a small "
         "parameter-selection step, not the systematic all-algorithm optimization required in Milestone 2.", "",
+        "A separate follow-up audit is available via `python audit_clustering.py`; "
+        "see docs/clustering_audit.md and outputs/clustering/audit/. It preserves this "
+        "historical experiment. Do not call k=3 a proven elbow or a uniquely correct count. "
+        "The elbow hint depends on the reviewed range, and small groups can represent "
+        "meaningful booking attributes rather than invalid records.", "",
         f"Silhouette uses the same seeded uniform sample of {summary['silhouette_sample_rows']:,} training "
         "rows for every candidate. It estimates sample geometry, not the exact full-training silhouette. "
         "Davies-Bouldin uses every row of the scored partition in the full encoded space. "
@@ -312,7 +317,8 @@ def run(root, sample_size=3000):
             ["How early were bookings made?", "How long was the stay?", "How many children were recorded?"],
             ["Median days before arrival", "Median nights", "Mean children (known values)"]):
         values = profiles[column]
-        ax.bar(profiles.cluster.astype(str), values, color=["#1f77b4", "#ff7f0e", "#2ca02c"][:selected_k])
+        ax.bar(profiles.cluster.astype(str), values,
+               color=[plt.get_cmap("tab10")(int(cluster) % 10) for cluster in profiles.cluster])
         for x, value in enumerate(values):
             ax.text(x, value, f"{value:g}" if column != "children_mean" else f"{value:.2f}", ha="center", va="bottom")
         ax.set(title=title, ylabel=unit, xlabel="Cluster", ylim=(0, max(values.max() * 1.2, .1)))
