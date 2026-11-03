@@ -172,10 +172,8 @@ look good merely by refusing to cluster most bookings.
 
 ## Run it on this Windows computer
 
-Open a PowerShell terminal in `E:\Uni\semester7\Machine Learning\Project\ML--Hotel-Booking`.
-The `.venv` environment was created with Python 3.13 and the repository's pinned
-library versions. Do not reinstall Python merely because the original README
-records a 3.14 run.
+Open PowerShell in the repository root. The commands below use the Python 3.13
+virtual environment and the versions pinned in the repository.
 
 ```powershell
 .\.venv\Scripts\python.exe prepare.py
@@ -188,10 +186,6 @@ records a 3.14 run.
 writes `outputs/clustering/milestone1/report.md` and its supporting files.
 The test suite checks preprocessing integrity, split boundaries, outcome
 independence and selected clustering safeguards.
-
-The confirmed contribution account is `kareemahmedd666`. Repository-local Git
-author settings use its ID-based GitHub noreply address; global settings are
-unchanged. Authentication for pushing is separate from commit attribution.
 
 Read the code in this order: `cluster.py` (entry point), `run()` (experiment),
 `internal_metrics()` (scores), `choose_candidate()` (count decision), and

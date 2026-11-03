@@ -217,10 +217,10 @@ def write_report(output, summary, profiles):
         "See docs/clustering_walkthrough.md for the beginner explanation and exact PowerShell commands. "
         "Metrics, profiles, source hashes, versions and settings are in outputs/clustering/milestone1/. "
         "Fitted objects remain local under artifacts/clustering/ and are excluded from the submission ZIP.", "",
-        "Contribution prepared for Kareem: clustering method research, baseline code, initial k review, "
-        "evaluation, figures and this report section. This statement does not claim any GitHub commit or "
-        "upload has occurred. The team must add full names/IDs/accounts and integrate this section into "
-        "its combined progress report.", "",
+        "The clustering experiment reuses the team's shared data preparation and preprocessing. "
+        "Kareem directed the clustering work and requested the wider review of the cluster count. "
+        "OpenAI Codex drafted the clustering implementation and audit, ran the experiments and tests, "
+        "and helped document and explain the results.", "",
     ]
     (output / "report.md").write_text("\n".join(lines), encoding="utf-8")
 

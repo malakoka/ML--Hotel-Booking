@@ -208,9 +208,7 @@ than silently relabelled as results from a different experiment.
 
 Milestone 1 asks for at least one initial clustering algorithm, preliminary
 metrics, interpretation, justified features/preprocessing and leakage awareness.
-Those parts are present. The original PDF's separate team/report requirements
-are not certified by this clustering audit; the user's stated report deferral
-does not remove the need for reproducible code and recorded explanations.
+Those parts are present. The team submission requirements are tracked separately.
 
 The **full Task C** remains later work: at least three distinct algorithms, each
 baseline versus systematically optimized settings; full-H2 K-Means where
@@ -232,11 +230,4 @@ Keep full-H2 unsupervised work separate from supervised test-driven decisions.
 - `outputs/clustering/milestone1/`: original baseline results, regenerated with
   the same scientific settings and an audit link in the report.
 
-The earlier A-to-Z study guide describes the experiment before this audit.
-Read this document as its dated addendum for the new count/stability results.
-
-Use `git log --oneline`, `git show <commit>` or `git diff origin/main...HEAD`
-from the repository to inspect changes. Commits use Kareem's repo-local Git
-identity. The audit is committed locally before any upload; it does not itself
-push, merge or send a pull-request message. Existing untracked `outputs/eda/`
-files are retained and are outside these new clustering-audit commits.
+See the Milestone 1 report for the contribution and assistance record.
