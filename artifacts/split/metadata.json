@@ -1,0 +1,23 @@
+{
+  "source_sha256": "6796f5b9b2b9e7281662b29730fc2880f8e614107d0d14d09be2ede1a6e605a4",
+  "pandas_version": "3.1.0",
+  "seed": 42,
+  "target_group_fractions": {
+    "train": 0.7,
+    "validation": 0.15,
+    "test": 0.15
+  },
+  "grouping": "identical admitted supervised feature vectors; targets and final outcomes excluded",
+  "chronological": false,
+  "rows": {
+    "train": 55930,
+    "validation": 11887,
+    "test": 11513
+  },
+  "groups": {
+    "train": 33198,
+    "validation": 7115,
+    "test": 7115
+  },
+  "assignments_sha256": "ec9e27a55b210e7958c6d0e5d0cf47c398bb68d42c459672f0f2059d6a4b391f"
+}
