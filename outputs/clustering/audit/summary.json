@@ -1,0 +1,119 @@
+{
+  "scope": "Training-only audit; historical baseline and saved models unchanged",
+  "training_rows": 55930,
+  "encoded_features": 33,
+  "max_k": 12,
+  "fit_seeds": [
+    42,
+    7,
+    21,
+    84,
+    123
+  ],
+  "sample_seeds": [
+    42,
+    43,
+    44
+  ],
+  "sample_rows": 3000,
+  "subsample_seeds": [
+    101,
+    102,
+    103
+  ],
+  "choices": [
+    {
+      "fit_seed": 7,
+      "size_guard_choice": 3,
+      "unguarded_silhouette_choice": 3
+    },
+    {
+      "fit_seed": 21,
+      "size_guard_choice": 3,
+      "unguarded_silhouette_choice": 4
+    },
+    {
+      "fit_seed": 42,
+      "size_guard_choice": 3,
+      "unguarded_silhouette_choice": 4
+    },
+    {
+      "fit_seed": 84,
+      "size_guard_choice": 3,
+      "unguarded_silhouette_choice": 3
+    },
+    {
+      "fit_seed": 123,
+      "size_guard_choice": 3,
+      "unguarded_silhouette_choice": 3
+    }
+  ],
+  "elbow_range_hints": [
+    {
+      "range_start": 1,
+      "range_end": 6,
+      "chord_hint_k": 3
+    },
+    {
+      "range_start": 1,
+      "range_end": 8,
+      "chord_hint_k": 5
+    },
+    {
+      "range_start": 1,
+      "range_end": 10,
+      "chord_hint_k": 5
+    },
+    {
+      "range_start": 1,
+      "range_end": 12,
+      "chord_hint_k": 5
+    }
+  ],
+  "targeted_initialization_check": {
+    "k": [
+      3,
+      4
+    ],
+    "n_init": [
+      10,
+      50
+    ],
+    "reason": "Distinguish local minima from evidence against k=4"
+  },
+  "source_and_processed_training_features_match": true,
+  "split_hash_and_groups_valid": true,
+  "historical_metrics_reproduced": true,
+  "saved_pipeline_predictions_reproduced_all_train": true,
+  "supervised_test_file_opened": false,
+  "outcome_columns_loaded": false,
+  "all_kmeans_converged_before_limit": true,
+  "kmeans_parameters_except_k_and_seed": {
+    "algorithm": "lloyd",
+    "copy_x": true,
+    "init": "k-means++",
+    "max_iter": 300,
+    "n_init": 10,
+    "tol": 0.0001,
+    "verbose": 0
+  },
+  "input_hashes": {
+    "data\\raw\\H2.csv": "6796f5b9b2b9e7281662b29730fc2880f8e614107d0d14d09be2ede1a6e605a4",
+    "artifacts\\split\\assignments.csv": "b8611308a44cfe00c77f8323ee5915d2e538776337e1872a0fb3ce3e24cbbae3",
+    "artifacts\\split\\metadata.json": "9e31c2b3363ba02e6d5b40f9831afab00cb89f64d1ae72eeb4a0f8987f98858c",
+    "data\\processed\\train.csv": "9137081c7864c1ffb79e3fcdd7a6e357b26ad4c13c005680be285f948e89053f"
+  },
+  "versions": {
+    "python": "3.13.14",
+    "pandas": "3.1.0",
+    "numpy": "2.5.4",
+    "sklearn": "1.9.1"
+  },
+  "thread_limit": 4,
+  "limitations": [
+    "No universal true k or unique elbow established.",
+    "Five seed fits and three 80% subsamples do not prove population stability.",
+    "Silhouettes describe a sample; samples overlap and are not independent confidence intervals.",
+    "No business usefulness or superiority to other algorithms established."
+  ]
+}

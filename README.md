@@ -1,11 +1,56 @@
 # City Hotel (H2): preprocessing and exploratory analysis
 
+## Milestone 1 clustering contribution
+
+The initial K-Means experiment is runnable with:
+
+```powershell
+.\.venv\Scripts\python.exe cluster.py
+```
+
+Run `prepare.py` first to generate the data and shared split. The clustering
+runner fits on training rows only, preserves a reference k=3 run, reviews k=2..6
+using unsupervised training criteria, and performs one validation check. It does
+not open the supervised test file. Results and a report section are written to
+`outputs/clustering/milestone1/`; fitted pipelines stay in `artifacts/clustering/`.
+The research comparison, assumptions and beginner instructions are in
+`docs/clustering_walkthrough.md`. This is an initial experiment; the three
+algorithms and systematic optimization are later work.
+
+### Pre-push scientific audit
+
+```powershell
+.\.venv\Scripts\python.exe audit_clustering.py
+```
+
+This separate audit reviews k=1..12 with five initialization seeds, three
+silhouette samples for the seed-42 fits, and three 80% training-subset checks
+for k=3/4. It verifies the raw source, shared split, processed training features,
+historical scores and saved predictions. It writes `outputs/clustering/audit/`
+and preserves the original baseline and fitted models. Read
+`docs/clustering_audit.md` for findings and official scikit-learn examples.
+
+**k=3 is the historical preliminary baseline, not a proven elbow or uniquely
+correct count.** The elbow hint depends on the searched range. At n_init=10,
+k=3 is more consistent across initialization seeds; at n_init=50, k=4
+consistently beats k=3 on both internal metrics in this targeted comparison.
+Keep both results visible. The original k=4 solution separates 267 bookings
+with babies, so the old 1% size preference can exclude meaningful small groups.
+Milestone 2 must revisit feature weighting, other algorithms and practical
+usefulness before a final choice.
+
+This checkout originally had no generated records or split assignments, so
+preparation regenerated them using the existing fixed seeds and pinned libraries.
+Share the resulting split files with the team before combining experiments.
+Python 3.13 is also supported by the pinned dependencies used for this run.
+
 This repository prepares the City Hotel dataset for the CSE382 machine learning
 project. It verifies the original data, creates grouped train/validation/test
 partitions, generates EDA tables and plots, and fits reusable preprocessing
-pipelines. A CatBoost ADR regression baseline now supports training, validation,
-saved-model prediction and explicit final-test evaluation. Classifiers, clustering
-algorithms, regression model comparisons, tuning and the complete final application
+pipelines. Initial models include K-Means clustering, a Gaussian Naive Bayes
+cancellation classifier, and a CatBoost ADR regression baseline with training,
+validation, saved-model prediction and explicit final-test evaluation. Further
+algorithms, model comparisons, systematic tuning and the complete final application
 remain to be implemented. Exploratory PCA is included; model cross-validation is
 not yet implemented.
 
@@ -13,11 +58,13 @@ Repository: https://github.com/malakoka/ML--Hotel-Booking
 
 ## Setup and run on Windows / PowerShell
 
-Run these commands from the repository folder. The recorded preparation used
-Python 3.14.0; requirements.txt pins its analysis library versions.
+Run these commands from the repository folder. The original preparation recorded
+Python 3.14.0; the clustering contribution was reproduced and tested on Python
+3.13.14. The commands below use Python 3.13, which is installed on this computer.
+requirements.txt pins the analysis library versions.
 
 ```powershell
-py -3.14 -m venv .venv
+py -3.13 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 New-Item -ItemType Directory -Force -Path data/raw | Out-Null
 Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/afaq-ahmad/Hotel-booking-demand-Case-Study/master/H2.csv' -OutFile 'data/raw/H2.csv'
@@ -76,6 +123,9 @@ using those existing assignments. Regression commands never create a new split.
 The restored assignments are byte-identical to the GitHub blob. The upstream
 metadata fingerprint referred to a CRLF copy; `prepare.py` refreshed that
 fingerprint for the checked-out LF bytes without changing any row assignments.
+The shared split files now use LF line endings, enforced by `.gitattributes`, so
+Windows and Unix checkouts retain the same assignments fingerprint. Existing
+clustering reports preserve the fingerprints recorded during their original run.
 
 ```powershell
 .\.venv\Scripts\python.exe -m hotel_booking.regression train
