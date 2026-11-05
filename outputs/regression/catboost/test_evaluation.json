@@ -1,0 +1,25 @@
+{
+  "partition": "test",
+  "metrics": {
+    "MAE": 13.413505384990742,
+    "MSE": 443.05253519703075,
+    "RMSE": 21.048813154119422,
+    "R2": 0.7249191500275254
+  },
+  "model_sha256": "ffc3957e24bc56677bb313382bf04aa51b23bee1d1a98493a09185efc534c66a",
+  "provenance": {
+    "records_sha256": "bca948024d1f24bd19791ad2096d5ec73bc52361435f68f0666d4f0b37d078c7",
+    "assignments_sha256": "ec9e27a55b210e7958c6d0e5d0cf47c398bb68d42c459672f0f2059d6a4b391f",
+    "metadata_sha256": "a0e00d0f5412d369acb9cd98b735de48c4181817f2629d01621db4bdd865b7c2"
+  },
+  "test_rows": 11513,
+  "mean_baseline": {
+    "MAE": 29.62847972143649,
+    "MSE": 1614.2401373114822,
+    "RMSE": 40.177607411485845,
+    "R2": -0.0022435574911086054
+  },
+  "median_absolute_error": 9.105186477599062,
+  "within_10_ADR_percent": 52.662207938851736,
+  "within_20_ADR_percent": 81.82923651524364
+}

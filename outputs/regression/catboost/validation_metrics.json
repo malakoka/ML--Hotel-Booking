@@ -1,0 +1,87 @@
+{
+  "task": "ADR regression",
+  "experiment": "single configuration; no hyperparameter search",
+  "selection": "validation RMSE early stopping; final test not read",
+  "parameters": {
+    "iterations": 500,
+    "depth": 6,
+    "learning_rate": 0.1,
+    "loss_function": "RMSE",
+    "eval_metric": "RMSE",
+    "random_seed": 42,
+    "thread_count": 4,
+    "allow_writing_files": false
+  },
+  "early_stopping_rounds": 50,
+  "tree_count": 133,
+  "training_seconds": 9.914850299945101,
+  "training_rows": 55930,
+  "validation_rows": 11887,
+  "validation_metrics": {
+    "MAE": 12.596671562318337,
+    "MSE": 375.31438400739677,
+    "RMSE": 19.37303239060413,
+    "R2": 0.7572633565597519
+  },
+  "mean_baseline": {
+    "MAE": 29.623505678036086,
+    "MSE": 1546.8992774676353,
+    "RMSE": 39.330640440598415,
+    "R2": -0.00046562123033000447
+  },
+  "median_baseline": {
+    "MAE": 29.476089846050304,
+    "MSE": 1591.7409917725245,
+    "RMSE": 39.896628827164385,
+    "R2": -0.029467246748260845
+  },
+  "features": [
+    "LeadTime",
+    "ArrivalDateYear",
+    "StaysInWeekendNights",
+    "StaysInWeekNights",
+    "Adults",
+    "Children",
+    "Babies",
+    "PreviousCancellations",
+    "PreviousBookingsNotCanceled",
+    "IsRepeatedGuest",
+    "HasCompany",
+    "ChildrenMissing",
+    "ArrivalMonthSin",
+    "ArrivalMonthCos",
+    "ArrivalWeekdaySin",
+    "ArrivalWeekdayCos",
+    "Meal",
+    "MarketSegment",
+    "DistributionChannel",
+    "ReservedRoomType",
+    "Agent",
+    "CustomerType"
+  ],
+  "categorical_features": [
+    "Meal",
+    "MarketSegment",
+    "DistributionChannel",
+    "ReservedRoomType",
+    "Agent",
+    "CustomerType"
+  ],
+  "missing_values": "Unknown categorical token; native CatBoost numerical handling",
+  "train_provenance": {
+    "records_sha256": "9137081c7864c1ffb79e3fcdd7a6e357b26ad4c13c005680be285f948e89053f",
+    "assignments_sha256": "ec9e27a55b210e7958c6d0e5d0cf47c398bb68d42c459672f0f2059d6a4b391f",
+    "metadata_sha256": "a0e00d0f5412d369acb9cd98b735de48c4181817f2629d01621db4bdd865b7c2"
+  },
+  "validation_provenance": {
+    "records_sha256": "92646ead837e98c3320c57c99da3ab8e490547993db925828185779b166e5d34",
+    "assignments_sha256": "ec9e27a55b210e7958c6d0e5d0cf47c398bb68d42c459672f0f2059d6a4b391f",
+    "metadata_sha256": "a0e00d0f5412d369acb9cd98b735de48c4181817f2629d01621db4bdd865b7c2"
+  },
+  "model_sha256": "ffc3957e24bc56677bb313382bf04aa51b23bee1d1a98493a09185efc534c66a",
+  "versions": {
+    "python": "3.14.7",
+    "pandas": "3.1.0",
+    "catboost": "1.2.10"
+  }
+}

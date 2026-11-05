@@ -45,12 +45,14 @@ Share the resulting split files with the team before combining experiments.
 Python 3.13 is also supported by the pinned dependencies used for this run.
 
 This repository prepares the City Hotel dataset for the CSE382 machine learning
-project and includes an initial K-Means clustering experiment. It verifies the
-original data, creates grouped train/validation/test partitions, generates EDA
-tables and plots, and fits reusable preprocessing pipelines. Regression models,
-classifiers, further clustering algorithms, systematic tuning and the final
-application remain to be implemented. Exploratory PCA is included;
-model cross-validation is not yet implemented.
+project. It verifies the original data, creates grouped train/validation/test
+partitions, generates EDA tables and plots, and fits reusable preprocessing
+pipelines. Initial models include K-Means clustering, a Gaussian Naive Bayes
+cancellation classifier, and a CatBoost ADR regression baseline with training,
+validation, saved-model prediction and explicit final-test evaluation. Further
+algorithms, model comparisons, systematic tuning and the complete final application
+remain to be implemented. Exploratory PCA is included; model cross-validation is
+not yet implemented.
 
 Repository: https://github.com/malakoka/ML--Hotel-Booking
 
@@ -99,6 +101,87 @@ Preparation creates missing output directories. Tests require preparation to run
 first because they load generated objects and the local raw dataset.
 
 ## Shared partitions and model development
+
+### CatBoost ADR regression
+
+Install the additional dependency into the project environment:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-regression.txt
+.\.venv\Scripts\python.exe -m unittest discover -s tests -p test_regression.py -v
+```
+
+The regression tests use synthetic bookings and require no downloaded dataset.
+Actual training requires `data/processed/train.csv`, `validation.csv`, and the
+team's `artifacts/split/assignments.csv` and `metadata.json`. The shared split files
+were restored from `clustering-milestone1` commit
+`5ceff9390e9f15c83cc81f60e05c1a9276a52ad7` in Malak's repository. Its preprocessing
+code is identical to the code on `main`. The original H2 CSV was downloaded from
+the source above, its SHA-256 verified, and `prepare.py` regenerated the data
+using those existing assignments. Regression commands never create a new split.
+
+The restored assignments are byte-identical to the GitHub blob. The upstream
+metadata fingerprint referred to a CRLF copy; `prepare.py` refreshed that
+fingerprint for the checked-out LF bytes without changing any row assignments.
+The shared split files now use LF line endings, enforced by `.gitattributes`, so
+Windows and Unix checkouts retain the same assignments fingerprint. Existing
+clustering reports preserve the fingerprints recorded during their original run.
+
+```powershell
+.\.venv\Scripts\python.exe -m hotel_booking.regression train
+.\.venv\Scripts\python.exe -m hotel_booking.regression evaluate
+.\.venv\Scripts\python.exe -m hotel_booking.regression predict --input bookings.csv --output predictions.csv
+```
+
+Prediction CSVs use the original input column names listed in
+`hotel_booking.preprocessing.RAW_INPUTS`; neither ADR nor cancellation outcomes
+are required. Output rows preserve input order and contain `predicted_ADR`.
+
+This is one fixed baseline configuration, not a completed hyperparameter search:
+500 iterations maximum, depth 6, learning rate 0.1, seed 42 and four CPU threads.
+Validation RMSE selects the iteration using early stopping (patience 50).
+Options `--iterations`, `--depth`, `--learning-rate`, `--patience` and `--threads`
+allow explicit experiments. Re-running training replaces this model and its
+reports; preserve previous reports separately when comparing experiments.
+
+The existing deterministic feature whitelist is reused. Categories stay as strings
+instead of being one-hot encoded. Missing categories become `Unknown`; numerical
+missing values use CatBoost's native missing-value handling instead of median
+imputation. This deliberate preprocessing variant uses no scaling. The existing
+preprocessing pipelines for other models remain available.
+
+Training writes a reusable native model and metadata to
+`artifacts/regression/catboost/` (Git-ignored), and validation MAE/MSE/RMSE/R2,
+mean/median dummy baselines, predictions, feature importance and runtime to
+`outputs/regression/catboost/`. The saved model is loaded for inference, never
+retrained. Shared split membership, input groups and fingerprints are validated.
+No final-test CSV is read by training. Only after completing model selection run:
+
+```powershell
+.\.venv\Scripts\python.exe -m hotel_booking.regression evaluate --split test
+```
+
+The test command records results but does not technically prevent repeated use;
+keep the holdout reserved for the final evaluation. Three-model comparisons,
+group-aware CV, systematic tuning and regression PCA experiments are still needed.
+
+#### First real-data baseline (2026-11-03)
+
+Training used 55,930 bookings and validation used 11,887 bookings. Early stopping
+selected 133 trees from the maximum of 500. Saved-model validation reproduced
+the training report's scores:
+
+| Metric | CatBoost | Training-mean baseline |
+| --- | ---: | ---: |
+| MAE | 12.5967 | 29.6235 |
+| RMSE | 19.3730 | 39.3306 |
+| R2 | 0.7573 | -0.0005 |
+
+MAE and RMSE are in ADR units. These are development validation results, not
+final-test scores. All 15 preprocessing and regression tests passed. The 11,513
+test bookings were reserved and were not scored. Full metrics and row predictions
+are in `outputs/regression/catboost/`; the saved model is in
+`artifacts/regression/catboost/model.cbm`.
 
 Use the committed split: 55,930 training rows, 11,887 validation rows and 11,513
 test rows. It assigns identical admitted supervised-input groups to one partition.

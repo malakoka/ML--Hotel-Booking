@@ -1,0 +1,15 @@
+{
+  "partition": "validation",
+  "metrics": {
+    "MAE": 12.596671562318337,
+    "MSE": 375.31438400739677,
+    "RMSE": 19.37303239060413,
+    "R2": 0.7572633565597519
+  },
+  "model_sha256": "ffc3957e24bc56677bb313382bf04aa51b23bee1d1a98493a09185efc534c66a",
+  "provenance": {
+    "records_sha256": "92646ead837e98c3320c57c99da3ab8e490547993db925828185779b166e5d34",
+    "assignments_sha256": "ec9e27a55b210e7958c6d0e5d0cf47c398bb68d42c459672f0f2059d6a4b391f",
+    "metadata_sha256": "a0e00d0f5412d369acb9cd98b735de48c4181817f2629d01621db4bdd865b7c2"
+  }
+}
