@@ -1,5 +1,6 @@
-from pathlib import Path  #To locate dataset files
-import pandas as pd #to read CSV files
+from pathlib import Path  # To locate dataset files
+import json
+import pandas as pd  # to read CSV files
 from sklearn.pipeline import Pipeline
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import (
@@ -10,95 +11,120 @@ from sklearn.metrics import (
     f1_score,
     roc_auc_score,
 )
+from sklearn.preprocessing import FunctionTransformer
+from scipy.sparse import issparse
 
-from .preprocessing import RAW_INPUTS  #the 19 permitted features alredy defined by preprocessing
+from .preprocessing import (
+    RAW_INPUTS,
+)  # the 19 permitted features alredy defined by preprocessing
 from .preprocessing import make_preprocessor
 
-#Finds the main project folder, parent directory
+# Finds the main project folder, parent directory
 ROOT = Path(__file__).resolve().parents[1]
 
-# Load the training dataset into a pandas DataFrame. The dataset is expected to be in the "data/processed" directory relative to the project root.
-train = pd.read_csv(ROOT / "data/processed/train.csv")
-
-#input columns
-X_train = train[RAW_INPUTS]
-#target columns
-y_train = train["IsCanceled"].astype(int)
-
-#verify dimensions
-print("X shape:", X_train.shape)
-print("y shape:", y_train.shape)
-
-#get the proportion of canceled bookings in the training set
-print(y_train.value_counts(normalize=True))
-
-#creating the preprocessing pipeline
-pipeline = Pipeline([
-    ("preprocessing", make_preprocessor("classification", scaled=True))
-])
-
-# here we fit the preprocessing pipeline to the training data and transform it, resulting in a processed feature matrix X_processed. The fit_transform method is used to both fit the preprocessing steps to the training data and apply those transformations to the data.
-X_processed = pipeline.fit_transform(X_train)
-
-print("Processed X shape:", X_processed.shape)
-print("Output type:", type(X_processed).__name__)
-
-#coverts sparse CSR matrix into a dense NumPy array. 
-X_dense = X_processed.toarray()
-
-print("Dense X shape:", X_dense.shape)
-print("Dense output type:", type(X_dense).__name__)
+# Directory for classification experiment results.
+OUTPUT_DIR = ROOT / "outputs" / "classification"
 
 
-# NOW WE ADD THE NB MODELL
+# ------Reusable classification functions----------
 
-model = GaussianNB()
 
-#Train it
-model.fit(X_dense, y_train)
+# Converts sparse feature matrices to dense arrays required by GaussianNB.
+def to_dense(X):
+    return X.toarray() if issparse(X) else X
 
-print("Classes:", model.classes_)
-print("Class priors:", model.class_prior_)
-print("Feature means shape:", model.theta_.shape)
 
-# NOW WE VALIDATE THE MODEL
+# Combines preprocessing, feature conversion, and classification into one pipeline.
+def build_pipeline():
+    return Pipeline(
+        [
+            ("preprocessing", make_preprocessor("classification", scaled=True)),
+            ("to_dense", FunctionTransformer(to_dense)),
+            ("model", GaussianNB()),
+        ]
+    )
 
-validation = pd.read_csv(ROOT / "data/processed/validation.csv")
 
-X_valid = validation[RAW_INPUTS]
-y_valid = validation["IsCanceled"].astype(int)
+# Loads the requested dataset partition and separates features from target labels.
+def load_partition(partition: str):
+    """Load booking features and classification labels."""
 
-#here no fit becauseour preprocessor is already fitted to the training data, we only transform the validation data using the same preprocessing steps. This ensures that the validation data is processed in the same way as the training data, maintaining consistency in feature representation.
-X_valid_processed = pipeline.transform(X_valid)
-X_valid_dense = X_valid_processed.toarray()
+    if partition not in ("train", "validation"):
+        raise ValueError(f"Invalid partition: {partition}")
 
-y_pred = model.predict(X_valid_dense)
+    data = pd.read_csv(ROOT / "data" / "processed" / f"{partition}.csv")
 
-print("Predictions:", y_pred[:10])
-print("Actual labels:", y_valid.iloc[:10].to_numpy())
+    X = data[RAW_INPUTS]
+    y = data["IsCanceled"].astype(int)
 
-print("Predicted class distribution:")
-print(pd.Series(y_pred).value_counts())
+    return X, y
 
-cm = confusion_matrix(y_valid, y_pred, labels=[0, 1])
 
-print("Confusion Matrix:")
-print(cm)
+# Builds and trains the classification pipeline using the training dataset.
+def train_model(X_train, y_train):
+    """Build and fit the classification pipeline."""
+    pipeline = build_pipeline()
+    pipeline.fit(X_train, y_train)
+    return pipeline
 
-precision = precision_score(y_valid, y_pred)
-recall = recall_score(y_valid, y_pred)
 
-print("Precision:", precision)
-print("Recall:", recall)
+# Evaluates a trained classifier on labeled, unseen data.
+def evaluate_model(pipeline, X, y):
+    y_pred = pipeline.predict(X)
+    y_prob = pipeline.predict_proba(X)[:, 1]
+    results = {
+        "accuracy": accuracy_score(y, y_pred),
+        "precision": precision_score(y, y_pred, zero_division=0),
+        "recall": recall_score(y, y_pred, zero_division=0),
+        "f1": f1_score(y, y_pred, zero_division=0),
+        "roc_auc": roc_auc_score(y, y_prob),
+        "confusion_matrix": confusion_matrix(y, y_pred, labels=[0, 1]).tolist(),
+    }
 
-accuracy = accuracy_score(y_valid, y_pred)
-f1 = f1_score(y_valid, y_pred)
+    return results
 
-print("Accuracy:", accuracy)
-print("F1-score:", f1)
 
-y_prob = model.predict_proba(X_valid_dense)[:, 1]
+# Saves classification evaluation results to a JSON file.
+def save_results(results, filename):
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-roc_auc = roc_auc_score(y_valid, y_prob)
+    with open(OUTPUT_DIR / filename, "w", encoding="utf-8") as file:
+        json.dump(results, file, indent=4)
 
-print("ROC-AUC:", roc_auc)
+
+# Controls the classification workflow: data loading, training, prediction, and evaluation.
+def main():
+
+    # Load training data
+    X_train, y_train = load_partition("train")
+
+    print("X shape:", X_train.shape)
+    print("y shape:", y_train.shape)
+    print(y_train.value_counts(normalize=True))
+
+    # Build and train the complete pipeline
+    pipeline = train_model(X_train, y_train)
+
+    # Inspect the trained classifier
+    model = pipeline.named_steps["model"]
+
+    print("Classes:", model.classes_)
+    print("Class priors:", model.class_prior_)
+    print("Feature means shape:", model.theta_.shape)
+
+    # Load validation data
+    X_valid, y_valid = load_partition("validation")
+
+    # Evaluate the trained model on validation data
+    results = evaluate_model(pipeline, X_valid, y_valid)
+
+    # Display evaluation results
+    for metric, value in results.items():
+        print(f"{metric}: {value}")
+
+    # Save Gaussian Naive Bayes baseline results
+    save_results(results, "gnb_baseline.json")
+
+
+if __name__ == "__main__":
+    main()

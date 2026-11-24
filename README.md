@@ -101,6 +101,27 @@ Preparation creates missing output directories. Tests require preparation to run
 first because they load generated objects and the local raw dataset.
 
 ## Shared partitions and model development
+### Gaussian Naive Bayes classification
+
+Predicts booking cancellations using a reusable classification
+pipeline with shared preprocessing and Gaussian Naive Bayes.
+
+Run after data preparation:
+
+```powershell
+python -m hotel_booking.classification
+```
+
+Run classification tests:
+
+```powershell
+python -m unittest discover -s tests -p "test_classification.py" -v
+```
+
+Baseline validation results are saved to
+`outputs/classification/gnb_baseline.json`.
+
+The refactored pipeline reproduces the Milestone 1 results.
 
 ### CatBoost ADR regression
 
