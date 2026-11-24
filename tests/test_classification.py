@@ -11,6 +11,8 @@ from hotel_booking.classification import (
 )
 
 from hotel_booking.preprocessing import RAW_INPUTS
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 
 
 class ClassificationTests(unittest.TestCase):
@@ -38,6 +40,55 @@ class ClassificationTests(unittest.TestCase):
         self.assertEqual(
             list(pipeline.named_steps), ["preprocessing", "to_dense", "model"]
         )
+
+    def test_logistic_pipeline_structure(self):
+        pipeline = build_pipeline(LogisticRegression())
+
+        self.assertEqual(
+            list(pipeline.named_steps),
+            ["preprocessing", "model"],
+        )
+
+        self.assertIsInstance(
+            pipeline.named_steps["model"],
+            LogisticRegression,
+        )
+
+    def test_random_forest_pipeline_structure(self):
+        pipeline = build_pipeline(RandomForestClassifier())
+
+        self.assertEqual(
+            list(pipeline.named_steps),
+            ["preprocessing", "model"],
+        )
+
+        self.assertIsInstance(
+            pipeline.named_steps["model"],
+            RandomForestClassifier,
+        )
+
+    def test_additional_classifiers(self):
+        X_train, y_train = load_partition("train")
+
+        models = [
+            LogisticRegression(max_iter=1000),
+            RandomForestClassifier(
+                n_estimators=10,
+                random_state=42,
+                n_jobs=-1,
+            ),
+        ]
+
+        for model in models:
+            with self.subTest(model=type(model).__name__):
+                pipeline = train_model(X_train, y_train, model)
+
+                predictions = pipeline.predict(X_train.iloc[:10])
+                probabilities = pipeline.predict_proba(X_train.iloc[:10])
+
+                self.assertEqual(predictions.shape, (10,))
+                self.assertEqual(probabilities.shape, (10, 2))
+                self.assertTrue(set(predictions).issubset({0, 1}))
 
     # Prevents accidental test-set access during model development.
     def test_invalid_partition(self):

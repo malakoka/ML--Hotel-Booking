@@ -13,5 +13,10 @@
             4209,
             808
         ]
-    ]
+    ],
+    "training_time_seconds": 1.290707799998927,
+    "model_parameters": {
+        "priors": null,
+        "var_smoothing": 1e-09
+    }
 }
