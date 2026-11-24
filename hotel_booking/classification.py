@@ -1,5 +1,6 @@
 from pathlib import Path  # To locate dataset files
 import json
+import argparse
 from time import perf_counter
 import pandas as pd  # to read CSV files
 import matplotlib.pyplot as plt  # for comparison plots
@@ -7,6 +8,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import StratifiedGroupKFold, cross_validate
 from sklearn.metrics import (
     confusion_matrix,
     precision_score,
@@ -68,6 +70,41 @@ def load_partition(partition: str):
     return X, y
 
 
+# Load group identifiers aligned with the training records.
+def load_training_groups():
+    row_ids = pd.read_csv(
+        ROOT / "data" / "processed" / "train.csv",
+        usecols=["source_row_id"],
+    )["source_row_id"]
+
+    assignments = pd.read_csv(
+        ROOT / "artifacts" / "split" / "assignments.csv",
+        dtype={"group_id": str},
+    )
+
+    train_assignments = assignments.loc[assignments["partition"] == "train"]
+
+    group_lookup = train_assignments.set_index("source_row_id")["group_id"]
+
+    groups = row_ids.map(group_lookup)
+
+    if groups.isna().any():
+        raise ValueError("Missing training group assignments.")
+
+    return groups
+
+
+# Create grouped cross-validation folds.
+def create_cv_splits(X, y, groups):
+    splitter = StratifiedGroupKFold(
+        n_splits=5,
+        shuffle=True,
+        random_state=42,
+    )
+
+    return list(splitter.split(X, y, groups))
+
+
 # Builds and trains the classification pipeline using the training dataset.
 def train_model(X_train, y_train, model=None):
     """Build and fit the classification pipeline."""
@@ -88,6 +125,43 @@ def evaluate_model(pipeline, X, y):
         "roc_auc": roc_auc_score(y, y_prob),
         "confusion_matrix": confusion_matrix(y, y_pred, labels=[0, 1]).tolist(),
     }
+
+    return results
+
+
+# Evaluate a classifier across the cross-validation folds.
+def evaluate_cross_validation(model, X, y, splits):
+
+    pipeline = build_pipeline(model)
+
+    metrics = [
+        "accuracy",
+        "precision",
+        "recall",
+        "f1",
+        "roc_auc",
+    ]
+
+    scores = cross_validate(
+        pipeline,
+        X,
+        y,
+        cv=splits,
+        scoring=metrics,
+        n_jobs=1,
+        error_score="raise",
+    )
+
+    results = {}
+
+    for metric in metrics:
+        values = scores[f"test_{metric}"]
+
+        results[metric] = {
+            "fold_scores": values.tolist(),
+            "mean": float(values.mean()),
+            "std": float(values.std()),
+        }
 
     return results
 
@@ -149,8 +223,7 @@ def get_baseline_models():
 
 
 # Controls the classification workflow: data loading, training, prediction, and evaluation.
-def main():
-
+def run_baselines():
     # Load training data
     X_train, y_train = load_partition("train")
 
@@ -183,6 +256,50 @@ def main():
         results["model_parameters"] = model.get_params(deep=False)
 
         save_results(results, f"{name}_baseline.json")
+
+
+# Run cross-validation for all baseline classifiers.
+def run_cross_validation():
+    X, y = load_partition("train")
+    groups = load_training_groups()
+    splits = create_cv_splits(X, y, groups)
+
+    for name, model in get_baseline_models().items():
+
+        print(f"\n{name.upper()} cross-validation:")
+
+        results = evaluate_cross_validation(model, X, y, splits)
+
+        for metric, result in results.items():
+            print(f"{metric}: {result['mean']:.4f} " f"+/- {result['std']:.4f}")
+
+        save_results(results, f"{name}_cv.json")
+
+
+# Command-line interface for classification experiments.
+def main():
+    parser = argparse.ArgumentParser(
+        description="Hotel booking cancellation classification"
+    )
+
+    parser.add_argument(
+        "command",
+        choices=["baseline", "plot", "cv"],
+        nargs="?",
+        default="baseline",
+        help="Classification experiment to execute",
+    )
+
+    args = parser.parse_args()
+
+    if args.command == "baseline":
+        run_baselines()
+
+    elif args.command == "plot":
+        show_baseline_comparison()
+
+    elif args.command == "cv":
+        run_cross_validation()
 
 
 if __name__ == "__main__":
